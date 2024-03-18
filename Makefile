@@ -1,41 +1,33 @@
-NAME       = pipex
+NAME       = pipex 
 CC         = cc
 CFLAGS     = -Wall -Wextra -Werror
-LIBRARY    = -L$(LIBFT_DIR) -lft
-INCLUDE    = -I$(HDR_DIR) -I$(LIBFT_DIR)includes/
-
-LIBFT      = $(LIBFT_DIR)libft.a
-LIBFT_DIR  = ./libft/
-
-HDR_LIST  = *.h
-HDR_DIR   = ./includes/
-HDR       = $(addprefix $(HDR_DIR), $(HDR_LIST))
-
+DFLAGS     = -g -fsanitize=address
+INCLUDE    = -I$(HDR_DIR)
+HDR_LIST   = *.h
+HDR_DIR    = ./includes/
+HDR        = $(addprefix $(HDR_DIR), $(HDR_LIST))
 SRCS       = *.c
 SRCS_DIR   = ./srcs/
-OBJS       = $(addprefix $(SRCS_DIR), $(SRCS:.c=.o))
+OBJ_DIR    = ./obj/
+OBJS       = $(addprefix $(OBJ_DIR),$(SRCS:.c=.o))
 
-$(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LIBRARY) $(INCLUDE)
+$(NAME): $(OBJS) 
+	$(CC) $(CFLAGS) $(OBJS) -o $@ $(INCLUDE)
 
-$(LIBFT):
-	make -C $(LIBFT_DIR)
+debug: $(OBJS)
+	$(CC) $(CFLAGS) $(DFLAGS) $(OBJS) -o $(NAME) $(INCLUDE)
 
 all: $(NAME)
 
-%.o: %.c $(HDR)
+$(OBJ_DIR)%.o: $(SRCS_DIR)%.c $(HDR)
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 clean:
 	rm -f $(OBJS)
-	make -C $(LIBFT_DIR) clean
 
 fclean: clean
 	rm -f $(NAME) $(LIBFT)
-	make -C $(LIBFT_DIR) fclean
 
 re: fclean all
 
-bonus: $(ALL)
-
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re 
